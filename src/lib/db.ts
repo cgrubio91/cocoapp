@@ -138,6 +138,26 @@ export interface AnimalActivity {
     cost?: number;
 }
 
+export interface UserQuotas {
+    maxFarms: number;
+    maxLots: number;
+    maxCrops: number;
+    maxAnimals: number;
+    maxWorkers: number;
+    maxSuppliers: number;
+}
+
+export interface User {
+    id?: number;
+    email: string;
+    passwordHash: string;
+    name: string;
+    role: 'superadmin' | 'user';
+    status: 'pending' | 'active' | 'suspended';
+    quotas: UserQuotas;
+    createdAt: Date;
+}
+
 export class AgriDatabase extends Dexie {
     farms!: Table<Farm>;
     lots!: Table<Lot>;
@@ -154,6 +174,7 @@ export class AgriDatabase extends Dexie {
     crops!: Table<Crop>;
     animalGroups!: Table<AnimalGroup>;
     animalActivities!: Table<AnimalActivity>;
+    users!: Table<User>;
 
     constructor() {
         super('AgriManagerDB');
@@ -218,7 +239,57 @@ export class AgriDatabase extends Dexie {
             animalGroups: '++id, type, status',
             animalActivities: '++id, groupId, date, activityType'
         });
+
+        // Version 6: Add users table for SaaS multi-tenancy
+        this.version(6).stores({
+            farms: '++id, name',
+            lots: '++id, farmId, name',
+            activities: '++id, lotId, type, date',
+            harvests: '++id, lotId, date',
+            postHarvest: '++id, lotId, date, processType',
+            sales: '++id, date, buyer',
+            workers: '++id, name',
+            laborLogs: '++id, workerId, lotId, date',
+            inventory: '++id, name, type',
+            inventoryTransactions: '++id, itemId, date',
+            suppliers: '++id, name, category',
+            expenses: '++id, date, supplierId, category',
+            crops: '++id, lotId, status, plantingDate',
+            animalGroups: '++id, type, status',
+            animalActivities: '++id, groupId, date, activityType',
+            users: '++id, email, role, status'
+        }).upgrade(async (tx) => {
+            // Create default superadmin user
+            const existingUsers = await tx.table('users').count();
+            if (existingUsers === 0) {
+                await tx.table('users').add({
+                    email: 'admin@agrogold.com',
+                    passwordHash: await hashPassword('admin123'), // Change this in production!
+                    name: 'Superadministrador',
+                    role: 'superadmin',
+                    status: 'active',
+                    quotas: {
+                        maxFarms: 999,
+                        maxLots: 999,
+                        maxCrops: 999,
+                        maxAnimals: 999,
+                        maxWorkers: 999,
+                        maxSuppliers: 999
+                    },
+                    createdAt: new Date()
+                });
+            }
+        });
     }
+}
+
+// Simple password hashing (for demo - use bcrypt in production!)
+async function hashPassword(password: string): Promise<string> {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(password);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 }
 
 export const db = new AgriDatabase();

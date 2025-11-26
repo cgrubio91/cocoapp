@@ -1,12 +1,16 @@
-import { Link, Outlet, useLocation } from 'react-router-dom';
-import { Home, Sprout, ClipboardList, BarChart3, Settings, Truck, Menu, DollarSign, Wheat, PawPrint, Map } from 'lucide-react';
+import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { Home, Sprout, ClipboardList, BarChart3, Settings, Truck, Menu, DollarSign, Wheat, PawPrint, Map, LogOut, Shield } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { useState } from 'react';
 import { AIAssistant } from './AIAssistant';
+import { getCurrentUser, logout, isSuperAdmin } from '../lib/auth';
 
 export function Layout() {
     const location = useLocation();
+    const navigate = useNavigate();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const currentUser = getCurrentUser();
+    const isAdmin = isSuperAdmin();
 
     const navItems = [
         { icon: Home, label: 'Inicio', path: '/' },
@@ -18,22 +22,44 @@ export function Layout() {
         { icon: PawPrint, label: 'Animales', path: '/livestock' },
         { icon: Map, label: 'Precisión', path: '/precision-ag' },
         { icon: BarChart3, label: 'Reportes', path: '/reports' },
+        ...(isAdmin ? [{ icon: Shield, label: 'Admin', path: '/admin' }] : []),
         { icon: Settings, label: 'Config', path: '/settings' },
     ];
+
+    const handleLogout = () => {
+        logout();
+        navigate('/login');
+    };
 
     return (
         <div className="flex flex-col h-screen bg-slate-50">
             {/* Header */}
             <header className="bg-white border-b border-slate-100 px-6 py-4 flex items-center justify-between sticky top-0 z-20 shadow-sm">
                 <div className="flex items-center space-x-3">
-                    <div className="bg-green-100 p-2 rounded-lg">
-                        <Sprout className="text-green-700" size={24} />
+                    <img src="/agrogold-logo.png" alt="AgroGold" className="h-10 w-10 rounded-lg" />
+                    <div>
+                        <h1 className="text-xl font-bold text-slate-800 tracking-tight">
+                            <span className="text-green-700">Agro</span><span className="text-yellow-600">Gold</span>
+                        </h1>
+                        <p className="text-xs text-slate-500">Software Integral Agropecuario</p>
                     </div>
-                    <h1 className="text-xl font-semibold text-slate-800 tracking-tight">AgriManager <span className="text-green-700">Pro</span></h1>
                 </div>
-                <button className="md:hidden text-slate-500" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
-                    <Menu size={24} />
-                </button>
+                <div className="flex items-center gap-4">
+                    <div className="hidden md:block text-right">
+                        <p className="text-sm font-medium text-slate-800">{currentUser?.name}</p>
+                        <p className="text-xs text-slate-500">{currentUser?.email}</p>
+                    </div>
+                    <button
+                        onClick={handleLogout}
+                        className="hidden md:flex items-center gap-2 bg-red-50 text-red-700 px-4 py-2 rounded-xl hover:bg-red-100 transition text-sm font-medium"
+                    >
+                        <LogOut size={16} />
+                        Salir
+                    </button>
+                    <button className="md:hidden text-slate-500" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+                        <Menu size={24} />
+                    </button>
+                </div>
             </header>
 
             <div className="flex flex-1 overflow-hidden">

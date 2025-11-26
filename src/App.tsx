@@ -1,5 +1,8 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Layout } from './components/Layout';
+import { ProtectedRoute } from './components/ProtectedRoute';
+import { Login } from './pages/Login';
+import { Register } from './pages/Register';
 import { Home } from './pages/Home';
 import { Field } from './pages/Field';
 import { Harvest } from './pages/Harvest';
@@ -10,12 +13,15 @@ import { Expenses } from './pages/Expenses';
 import { Crops } from './pages/Crops';
 import { Livestock } from './pages/Livestock';
 import { PrecisionAg } from './pages/PrecisionAg';
+import { Admin } from './pages/Admin';
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Layout />}>
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/" element={<ProtectedRoute><Layout /></ProtectedRoute>}>
           <Route index element={<Home />} />
           <Route path="field" element={<Field />} />
           <Route path="harvest" element={<Harvest />} />
@@ -25,6 +31,7 @@ function App() {
           <Route path="livestock" element={<Livestock />} />
           <Route path="precision-ag" element={<PrecisionAg />} />
           <Route path="reports" element={<Reports />} />
+          <Route path="admin" element={<Admin />} />
           <Route path="settings" element={<Settings />} />
         </Route>
       </Routes>
