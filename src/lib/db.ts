@@ -2,13 +2,17 @@ import Dexie, { type Table } from 'dexie';
 
 export interface Farm {
     id?: number;
+    userId: number;
     name: string;
     area: number; // in hectares
-    location?: string; // JSON string of coordinates or description
+    location?: string;
+    imageUrl?: string; // Farm photo
+    createdAt?: Date;
 }
 
 export interface Lot {
     id?: number;
+    userId: number;
     farmId: number;
     name: string;
     cropType: 'coffee' | 'cacao' | 'other';
@@ -17,37 +21,41 @@ export interface Lot {
 
 export interface Activity {
     id?: number;
+    userId: number;
     lotId: number;
     type: 'pest_control' | 'fertilization' | 'pruning' | 'weeding' | 'other';
     date: Date;
-    details: any; // JSON object for specific details
+    details: any;
     photoUrl?: string;
     location?: { lat: number; lng: number };
-    coordinates?: { lat: number; lng: number }; // For precision agriculture
+    coordinates?: { lat: number; lng: number };
 }
 
 export interface Harvest {
     id?: number;
+    userId: number;
     lotId: number;
     date: Date;
-    quantity: number; // kg or units
-    quality?: string; // e.g., 'mature', 'green', 'mixed'
+    quantity: number;
+    quality?: string;
 }
 
 export interface PostHarvest {
     id?: number;
+    userId: number;
     lotId: number;
     date: Date;
     processType: 'fermentation' | 'drying' | 'milling' | 'other';
-    weight: number; // kg
+    weight: number;
     notes?: string;
 }
 
 export interface Sale {
     id?: number;
+    userId: number;
     date: Date;
     buyer: string;
-    quantity: number; // kg
+    quantity: number;
     pricePerKg: number;
     totalValue: number;
     cropType: 'coffee' | 'cacao' | 'other';
@@ -55,13 +63,15 @@ export interface Sale {
 
 export interface Worker {
     id?: number;
+    userId: number;
     name: string;
-    role: string; // 'recolector', 'mayordomo', 'general'
-    defaultWage: number; // daily or per unit
+    role: string;
+    defaultWage: number;
 }
 
 export interface LaborLog {
     id?: number;
+    userId: number;
     workerId: number;
     lotId: number;
     date: Date;
@@ -72,12 +82,13 @@ export interface LaborLog {
 
 export interface InventoryItem {
     id?: number;
+    userId: number;
     name: string;
     type: 'fertilizer' | 'pesticide' | 'tool' | 'fuel' | 'other';
     quantity: number;
     unit: string;
     averageCost: number;
-    minimumStock?: number; // Alert threshold
+    minimumStock?: number;
 }
 
 export interface InventoryTransaction {
@@ -92,6 +103,7 @@ export interface InventoryTransaction {
 
 export interface Supplier {
     id?: number;
+    userId: number;
     name: string;
     contact?: string;
     phone?: string;
@@ -101,6 +113,7 @@ export interface Supplier {
 
 export interface Expense {
     id?: number;
+    userId: number;
     date: Date;
     supplierId?: number;
     category: 'service' | 'rent' | 'equipment' | 'fuel' | 'other';
@@ -111,6 +124,7 @@ export interface Expense {
 
 export interface Crop {
     id?: number;
+    userId: number;
     name: string;
     variety?: string;
     plantingDate: Date;
@@ -121,6 +135,7 @@ export interface Crop {
 
 export interface AnimalGroup {
     id?: number;
+    userId: number;
     type: 'cattle' | 'pigs' | 'poultry' | 'fish' | 'other';
     breed?: string;
     quantity: number;
