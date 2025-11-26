@@ -1,13 +1,14 @@
 <!doctype html>
 <html lang="es">
- <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sistema de Gestión de Cacao</title>
-  <script src="/_sdk/data_sdk.js"></script>
-  <script src="/_sdk/element_sdk.js"></script>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Gestión de Cacao</title>
+    <script src="/_sdk/data_sdk.js"></script>
+    <script src="/_sdk/element_sdk.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
         body {
             box-sizing: border-box;
             margin: 0;
@@ -15,45 +16,74 @@
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             height: 100%;
         }
+
         html {
             height: 100%;
         }
+
         .module-card {
             transition: all 0.3s ease;
             cursor: pointer;
         }
+
         .module-card:hover {
             transform: translateY(-4px);
-            box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
         }
+
         .stat-card {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
+
         .form-section {
             animation: fadeIn 0.3s ease-in;
         }
+
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
+
         .loading-spinner {
-            border: 3px solid rgba(255,255,255,0.3);
+            border: 3px solid rgba(255, 255, 255, 0.3);
             border-top: 3px solid white;
             border-radius: 50%;
             width: 24px;
             height: 24px;
             animation: spin 1s linear infinite;
         }
+
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
     </style>
-  <style>@view-transition { navigation: auto; }</style>
- </head>
- <body class="h-full">
-  <div id="app" class="h-full flex flex-col"></div>
-  <script>
+    <style>
+        @view-transition {
+            navigation: auto;
+        }
+    </style>
+</head>
+
+<body class="h-full">
+    <header class="flex items-center justify-center p-4 bg-white shadow-md">
+        <img src="logo.png" alt="AgriGold Logo" class="h-12 mr-2">
+        <h1 class="text-2xl font-bold">AgriGold</h1>
+    </header>
+    <div id="app" class="h-full flex flex-col"></div>
+    <script>
         const defaultConfig = {
             app_title: "Sistema de Gestión de Cacao",
             farm_name: "Mi Finca Cacaotera",
@@ -101,20 +131,20 @@
 
         function renderCurrentView() {
             const app = document.getElementById('app');
-            
+
             if (currentView === 'dashboard') {
                 app.innerHTML = renderDashboard();
             } else if (currentView === 'module') {
                 app.innerHTML = renderModule(currentModule);
             }
-            
+
             attachEventListeners();
         }
 
         function renderDashboard() {
             const config = window.elementSdk?.config || defaultConfig;
             const stats = calculateStats();
-            
+
             return `
                 <div class="h-full flex flex-col" style="background-color: ${config.background_color};">
                     <!-- Header -->
@@ -177,7 +207,7 @@
             const config = window.elementSdk?.config || defaultConfig;
             const module = modules.find(m => m.id === moduleId);
             const moduleRecords = allRecords.filter(r => r.module === moduleId);
-            
+
             return `
                 <div class="h-full flex flex-col" style="background-color: ${config.background_color};">
                     <!-- Header -->
@@ -636,7 +666,7 @@
             if (recordForm) {
                 recordForm.addEventListener('submit', async (e) => {
                     e.preventDefault();
-                    
+
                     if (allRecords.length >= 999) {
                         showToast('Límite alcanzado: máximo 999 registros. Por favor elimina algunos registros primero.', 'error');
                         return;
@@ -652,11 +682,11 @@
                         module: currentModule,
                         created_at: new Date().toISOString()
                     };
-                    
+
                     formData.forEach((value, key) => {
                         if (value) {
-                            if (key === 'costo' || key === 'cantidad' || key === 'porcentaje_germinacion' || 
-                                key === 'cantidad_plantas' || key === 'peso_fresco' || key === 'num_mazorcas' || 
+                            if (key === 'costo' || key === 'cantidad' || key === 'porcentaje_germinacion' ||
+                                key === 'cantidad_plantas' || key === 'peso_fresco' || key === 'num_mazorcas' ||
                                 key === 'rendimiento_seco' || key === 'jornales' || key === 'horas_uso') {
                                 data[key] = parseFloat(value);
                             } else {
@@ -666,7 +696,7 @@
                     });
 
                     const result = await window.dataSdk.create(data);
-                    
+
                     submitBtn.disabled = false;
                     submitBtn.textContent = originalText;
 
@@ -685,14 +715,14 @@
                     e.stopPropagation();
                     const recordId = btn.dataset.id;
                     const record = allRecords.find(r => r.__backendId === recordId);
-                    
+
                     if (record) {
                         const originalText = btn.textContent;
                         btn.textContent = '⏳';
                         btn.disabled = true;
 
                         const result = await window.dataSdk.delete(record);
-                        
+
                         if (!result.isOk) {
                             btn.textContent = originalText;
                             btn.disabled = false;
@@ -709,13 +739,13 @@
             const config = window.elementSdk?.config || defaultConfig;
             const toast = document.createElement('div');
             const bgColor = type === 'error' ? '#ef4444' : type === 'success' ? '#10b981' : config.primary_color;
-            
+
             toast.className = 'fixed bottom-4 right-4 px-6 py-3 rounded-lg shadow-lg text-white font-semibold z-50';
             toast.style.backgroundColor = bgColor;
             toast.textContent = message;
-            
+
             document.body.appendChild(toast);
-            
+
             setTimeout(() => {
                 toast.style.opacity = '0';
                 toast.style.transition = 'opacity 0.3s ease';
@@ -808,5 +838,7 @@
 
         initApp();
     </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9995241980d9492b',t:'MTc2MjI3MDEwNC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+    <script>(function () { function c() { var b = a.contentDocument || a.contentWindow.document; if (b) { var d = b.createElement('script'); d.innerHTML = "window.__CF$cv$params={r:'9995241980d9492b',t:'MTc2MjI3MDEwNC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);"; b.getElementsByTagName('head')[0].appendChild(d) } } if (document.body) { var a = document.createElement('iframe'); a.height = 1; a.width = 1; a.style.position = 'absolute'; a.style.top = 0; a.style.left = 0; a.style.border = 'none'; a.style.visibility = 'hidden'; document.body.appendChild(a); if ('loading' !== document.readyState) c(); else if (window.addEventListener) document.addEventListener('DOMContentLoaded', c); else { var e = document.onreadystatechange || function () { }; document.onreadystatechange = function (b) { e(b); 'loading' !== document.readyState && (document.onreadystatechange = e, c()) } } } })();</script>
+</body>
+
 </html>
