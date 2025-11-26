@@ -1,0 +1,23 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    background-color: theme(colors.slate.50);
+    color: theme(colors.slate.900);
+    font-family: theme(fontFamily.sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    min-width: 320px;
+    min-height: 100vh;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-weight: theme(fontWeight.medium);
+    letter-spacing: theme(letterSpacing.tight);
+  }
+}

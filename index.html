@@ -1,32 +1,13 @@
 <!doctype html>
-<html lang="es">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AgriGold - Gestión Agropecuaria</title>
-    <link rel="stylesheet" href="styles.css">
-    <!-- SDK scripts (keep if needed) -->
-    <script src="/_sdk/data_sdk.js"></script>
-    <script src="/_sdk/element_sdk.js"></script>
-    <!-- App script -->
-    <script src="app.js" defer></script>
-    <script>
-        // Service Worker registration
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('service-worker.js')
-                .then(() => console.log('Service Worker registered'))
-                .catch(err => console.error('SW registration failed', err));
-        }
-    </script>
-</head>
-
-<body class="h-full">
-    <header class="flex items-center justify-center p-4 bg-white shadow-md">
-        <img src="logo.png" alt="AgriGold Logo" class="h-12 mr-2">
-        <h1 class="text-2xl font-bold">AgriGold</h1>
-    </header>
-    <div id="app" class="h-full flex flex-col"></div>
-</body>
-
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>cocoapp</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
 </html>
